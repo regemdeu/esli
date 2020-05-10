@@ -9,8 +9,8 @@ import (
 	"path"
 	"strings"
 
-	"os"
 	"github.com/urfave/cli/v2"
+	"os"
 )
 
 var(
@@ -94,10 +94,11 @@ func main() {
 	}
 
 	app.Action = func(c *cli.Context) error {
-		p := path.Clean(c.Args().Get(0))
+		p := c.Args().Get(0)
 		if p == "" {
 			return cli.ShowAppHelp(c)
 		}
+		p = path.Clean(p)
 		return writeEslintIgnore(p)
 	}
 
