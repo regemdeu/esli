@@ -6,6 +6,7 @@ import (
 	"io"
 	"io/ioutil"
 	"log"
+	"path"
 	"strings"
 
 	"os"
@@ -25,7 +26,7 @@ func writeEslintIgnore(p string) error{
 
 	for _, f := range files{
 		if !f.IsDir() && strings.HasSuffix(f.Name(), suffix) {
-			err := writeComment(p + f.Name())
+			err := writeComment(p + "/" + f.Name())
 			if err != nil {
 				log.Println(err)
 				continue
@@ -58,6 +59,9 @@ func writeComment(p string) error {
 		return err
 	}
 
+	if _, err = f.Seek(0, io.SeekStart); err != nil {
+		return err
+	}
 	// Write content
 	_,err = io.Copy(f, buf)
 	if err != nil {
@@ -90,7 +94,7 @@ func main() {
 	}
 
 	app.Action = func(c *cli.Context) error {
-		p := c.Args().Get(0)
+		p := path.Clean(c.Args().Get(0))
 		if p == "" {
 			return cli.ShowAppHelp(c)
 		}
